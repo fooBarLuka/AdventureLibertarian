@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void initNavigationView(){
         drawerLayout = findViewById(R.id.main_drawer_layout_id);
         navigationView = findViewById(R.id.main_navigation_view_id);
-
     }
 
 
