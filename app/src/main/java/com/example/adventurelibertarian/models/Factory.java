@@ -165,10 +165,10 @@ public class Factory {
         this.millisUntilFinished = millisUntilFinished;
     }
 
-    public void startWorking() {
+    public void startWorking(long timeLeft) {
         setWorking(true);
         final long totalWaitingTime = getWaitingTime();
-        new CountDownTimer(totalWaitingTime, 30) {
+        new CountDownTimer(timeLeft, countDownUpdateInterval) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -177,10 +177,11 @@ public class Factory {
                     factoryProgressBar.setProgress((int) (done * 100 / totalWaitingTime));
                 }
                 if(timeLeftTextView != null){
-                    long minutes = millisUntilFinished / (1000 * 60);
-                    long seconds = millisUntilFinished / 1000 % 60;
                     long milliSeconds = millisUntilFinished % 1000;
-                    timeLeftTextView.setText(minutes + ":" + seconds +":" + milliSeconds);
+                    long seconds = millisUntilFinished / 1000;
+                    long secondsToDisplay = seconds % 60;
+                    long minutes = seconds / 1000;
+                    timeLeftTextView.setText(minutes + ":" + secondsToDisplay +":" + milliSeconds);
                 }
                 setMillisUntilFinished(millisUntilFinished);
             }
@@ -199,47 +200,7 @@ public class Factory {
                 setMillisUntilFinished(totalWaitingTime);
 
                 if (getHasManager()) {
-                    startWorking();
-                }
-            }
-        }.start();
-    }
-
-    public void loadWorking(long timeLeft) {
-        setWorking(true);
-        final long totalWaitingTime = getWaitingTime();
-        new CountDownTimer(timeLeft, 30) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long done = totalWaitingTime - millisUntilFinished;
-                if (factoryProgressBar != null) {
-                    factoryProgressBar.setProgress((int) (done * 100 / totalWaitingTime));
-                }
-                if(timeLeftTextView != null){
-                    long minutes = millisUntilFinished / (1000 * 60);
-                    long seconds = millisUntilFinished / 1000 % 60;
-                    long milliSeconds = millisUntilFinished % 1000;
-                    timeLeftTextView.setText(minutes + ":" + seconds +":" + milliSeconds);
-                }
-                setMillisUntilFinished(millisUntilFinished);
-            }
-
-            @Override
-            public void onFinish() {
-                if (factoryProgressBar != null) {
-                    factoryProgressBar.setProgress(0);
-                }
-                if(timeLeftTextView != null){
-                    timeLeftTextView.setText("0:0:0");
-                }
-                mainActivityPresenter.sumMoney(getIncome(), getZeroes());
-
-                setWorking(false);
-                setMillisUntilFinished(totalWaitingTime);
-
-                if (getHasManager()) {
-                    startWorking();
+                    startWorking(waitingTime);
                 }
             }
         }.start();
@@ -250,13 +211,13 @@ public class Factory {
             long timePast = currentTime - prevTime;
             long fullTime = millisDone + timePast;
             if (fullTime < getWaitingTime()) {
-                loadWorking(getWaitingTime() - fullTime);
+                startWorking(getWaitingTime() - fullTime);
             } else {
                 if (getHasManager()) {
                     int times = (int) (fullTime / getWaitingTime());
                     long progressToSet = fullTime % getWaitingTime();
                     mainActivityPresenter.sumOfflineMoney(getIncome() * times, getZeroes());
-                    loadWorking(getWaitingTime() - progressToSet);
+                    startWorking(getWaitingTime() - progressToSet);
                 } else {
                     mainActivityPresenter.sumOfflineMoney(getIncome(), getZeroes());
                 }
@@ -292,7 +253,7 @@ public class Factory {
             mainActivityPresenter.subtractPrice(getManagerPrice(), getManagerZeroes());
             setHasManager(true);
             if (!isWorking() && isOpen()) {
-                startWorking();
+                startWorking(waitingTime);
             }
             return true;
         }
@@ -323,6 +284,8 @@ public class Factory {
     private int zeroes;
     private double managerPrice;
     private int managerZeroes;
+
+    private int countDownUpdateInterval = 30;
 
     private ProgressBar factoryProgressBar;
     private TextView timeLeftTextView;

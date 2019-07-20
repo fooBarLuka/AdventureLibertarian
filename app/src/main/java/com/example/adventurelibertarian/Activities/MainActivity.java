@@ -9,17 +9,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adventurelibertarian.MainActivityPresenter;
 import com.example.adventurelibertarian.R;
+import com.example.adventurelibertarian.ShopFragment;
 import com.example.adventurelibertarian.utils.AlarmManagerUtil;
 import com.example.adventurelibertarian.utils.SharedPreferencesConstants;
 import com.example.adventurelibertarian.adapters.FactoriesAdapter;
@@ -31,7 +30,6 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
-import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -42,6 +40,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity implements SharedPreferencesConstants, RewardedVideoAdListener {
 
     private RewardedVideoAd rewardedVideoAd;
+
+    private boolean fragmentOpened = false;
 
     MainActivityPresenter mainActivityPresenter = new MainActivityPresenter(this);
 
@@ -54,9 +54,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private TextView currentMoneyTextView;
 
-    private NavigationView navigationView;
-    private DrawerLayout drawerLayout;
-
+    private Button shopButton;
+    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +64,39 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         CurrencyUtil.initCurrencies();
 
+        initFactories();
         initUI();
         initOnRewardAds();
         initUIActions();
+    }
+
+    private void initFactories() {
+        factories.clear();
+        Factory agricultureFactory = new Factory(0, 1, 0, 1.3,
+                10, 0,1.4, 100, 0, 1000, R.drawable.toxi, mainActivityPresenter);
+
+        agricultureFactory.setOpen(true);
+        factories.add(agricultureFactory);
+
+        Factory xinkaliFactory = new Factory(1, 20, 0, 1.4,
+                50,0, 1.5, 2000, 0, 2000, R.drawable.xink, mainActivityPresenter);
+
+        factories.add(xinkaliFactory);
+
+        Factory bateGeneralsFactory = new Factory(2, 1000, 0, 1.6,
+                1000, 0, 1.6, 10000, 0, 10000, R.drawable.dummy_bate, mainActivityPresenter);
+
+        factories.add(bateGeneralsFactory);
+
+        Factory chips = new Factory(3, 100000, 0, 1.7,
+                200000, 0,1.65, 10000, 3, 100000, R.drawable.chips, mainActivityPresenter);
+
+        factories.add(chips);
+
+        Factory parliament = new Factory(4, 100000, 9, 2.2,
+                100000, 6,2.1, 10000, 6,150000, R.drawable.parliament, mainActivityPresenter);
+
+        factories.add(parliament);
     }
 
     private void initUI() {
@@ -75,12 +104,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         resetButton = findViewById(R.id.reset_toggle_button_id);
 
+        shopButton = findViewById(R.id.shop_button_id);
+        fragmentManager = getSupportFragmentManager();
+
         initBonusImageView();
 
-        initFactories();
         loadGame();
         initRecyclerView();
-        initNavigationView();
 
         NotificationsUtil.createNotificationChannel(this);
     }
@@ -116,35 +146,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         factoriesRecyclerView.setAdapter(factoriesAdapter);
     }
 
-    private void initFactories() {
-        factories.clear();
-        Factory agricultureFactory = new Factory(0, 1, 0, 1.1,
-                10, 0,1.15, 100, 0, 200, R.drawable.toxi, mainActivityPresenter);
-
-        agricultureFactory.setOpen(true);
-        factories.add(agricultureFactory);
-
-        Factory xinkaliFactory = new Factory(1, 20, 0, 1.2,
-                50,0, 1.25, 2000, 0, 2000, R.drawable.xink, mainActivityPresenter);
-
-        factories.add(xinkaliFactory);
-
-        Factory bateGeneralsFactory = new Factory(2, 1000, 0, 1.3,
-                1000, 0, 1.3, 10000, 0, 10000, R.drawable.dummy_bate, mainActivityPresenter);
-
-        factories.add(bateGeneralsFactory);
-
-        Factory chips = new Factory(3, 100000, 0, 1.6,
-                200000, 0,1.55, 10000, 3, 100000, R.drawable.chips, mainActivityPresenter);
-
-        factories.add(chips);
-
-        Factory parliament = new Factory(4, 100000, 3, 2,
-                100000, 6,2.1, 10000, 6,150000, R.drawable.parliament, mainActivityPresenter);
-
-        factories.add(parliament);
-    }
-
     private void loadGame() {
         SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         if (!preferences.getBoolean(NEW_PLAYER, true)) {
@@ -154,14 +155,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    private void initNavigationView(){
-        drawerLayout = findViewById(R.id.main_drawer_layout_id);
-        navigationView = findViewById(R.id.main_navigation_view_id);
-    }
-
 
     public void updateCurrentMoney(double ownedMoney, int zeroes) {
-        currentMoneyTextView.setText("$ " + (long) ownedMoney + CurrencyUtil.reverseCurrencies.get(zeroes));
+        currentMoneyTextView.setText("$ " + String.format("%.2f", ownedMoney)+ CurrencyUtil.reverseCurrencies.get(zeroes));
     }
 
 
@@ -173,6 +169,32 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mainActivityPresenter.getBonusForTime(twelveHour, factories);
             }
         });
+
+        shopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!fragmentOpened){
+                    openShopFragment();
+                    fragmentOpened = true;
+                } else {
+                    closeShopFragment();
+                    fragmentOpened = false;
+                }
+            }
+        });
+    }
+
+    private void openShopFragment(){
+        ShopFragment shopFragment = ShopFragment.getInstance();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragments_container_id, shopFragment);
+        fragmentTransaction.commit();
+    }
+
+    private void closeShopFragment(){
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.remove(ShopFragment.getInstance());
+        fragmentTransaction.commit();
     }
 
     public void showBeforeRewardDialog(double bonusMoney, int bonusMoneyZeroes) {

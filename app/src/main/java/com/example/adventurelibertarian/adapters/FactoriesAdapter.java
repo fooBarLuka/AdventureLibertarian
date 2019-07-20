@@ -1,5 +1,6 @@
 package com.example.adventurelibertarian.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,11 +79,13 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
             Picasso.get().load(factory.getImageId()).into(circleImageView);
             updateLevelTextView(factory);
             updateUpgradeTextView(factory);
-            managerButton.setText("manager: " + (long) factory.getManagerPrice() + CurrencyUtil.reverseCurrencies.get(factory.getManagerZeroes()));
+            String managerMoneyFormatted = String.format("%.2f", factory.getManagerPrice());
+            Log.e("tagi", managerMoneyFormatted);
+            managerButton.setText("manager: " + managerMoneyFormatted + CurrencyUtil.reverseCurrencies.get(factory.getManagerZeroes()));
             if (factory.getHasManager() || !factory.isOpen()) {
                 managerButton.setVisibility(View.INVISIBLE);
             }
-            if(factory.isOpen()){
+            if (factory.isOpen()) {
                 lockImageView.setVisibility(View.INVISIBLE);
                 blurImageView.setVisibility(View.INVISIBLE);
             }
@@ -104,7 +107,7 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
             managerButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(factory.hireManager()){
+                    if (factory.hireManager()) {
                         managerButton.setVisibility(View.INVISIBLE);
                     }
                 }
@@ -115,14 +118,14 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
             upgradeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(factory.upgradeFactory()){
+                    if (factory.upgradeFactory()) {
                         updateUpgradeTextView(factory);
                         updateLevelTextView(factory);
                         updateIncomeTextView(factory);
                         updateEvolutionProgressPar(factory);
 
-                        if(factory.getLevel() == 1){
-                            if(!factory.getHasManager()) {
+                        if (factory.getLevel() == 1) {
+                            if (!factory.getHasManager()) {
                                 managerButton.setVisibility(View.VISIBLE);
                             }
                             lockImageView.setVisibility(View.INVISIBLE);
@@ -139,7 +142,7 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
                 public void onClick(View v) {
                     if (factory.isOpen()) {
                         if (!factory.isWorking()) {
-                            factory.startWorking();
+                            factory.startWorking(factory.getWaitingTime());
                         }
                     }
                 }
@@ -147,7 +150,7 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
         }
 
         private void updateUpgradeTextView(Factory factory) {
-            String textToDisplay = "buy: " + (long) factory.getUpgradePrice() + " " + CurrencyUtil.reverseCurrencies.get(factory.getUpgradeZeros());
+            String textToDisplay = "buy: " + String.format("%.2f", factory.getUpgradePrice()) + " " + CurrencyUtil.reverseCurrencies.get(factory.getUpgradeZeros());
             upgradeButton.setText(textToDisplay);
         }
 
@@ -156,7 +159,8 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
         }
 
         private void updateIncomeTextView(Factory factory) {
-            incomeTextView.setText((long) factory.getIncome() + " " + CurrencyUtil.reverseCurrencies.get(factory.getZeroes()));
+            String incomeFormated = String.format("%.2f", factory.getIncome());
+            incomeTextView.setText(incomeFormated + " " + CurrencyUtil.reverseCurrencies.get(factory.getZeroes()));
         }
 
         private void updateEvolutionProgressPar(Factory factory) {
