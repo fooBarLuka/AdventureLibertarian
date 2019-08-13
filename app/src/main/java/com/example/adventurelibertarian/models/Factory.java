@@ -1,12 +1,11 @@
 package com.example.adventurelibertarian.models;
 
 import android.os.CountDownTimer;
-import android.os.SystemClock;
-import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.adventurelibertarian.MainActivityPresenter;
+import com.example.adventurelibertarian.utils.CountDownUtil;
 
 public class Factory {
 
@@ -165,23 +164,21 @@ public class Factory {
         this.millisUntilFinished = millisUntilFinished;
     }
 
-    public void startWorking(long timeLeft) {
+    public void startWorking(final long timeLeft) {
         setWorking(true);
         final long totalWaitingTime = getWaitingTime();
+        final CountDownUtil countDownUtil = new CountDownUtil(timeLeft);
         new CountDownTimer(timeLeft, countDownUpdateInterval) {
 
             @Override
             public void onTick(long millisUntilFinished) {
+                countDownUtil.onTickHappened(millisUntilFinished);
                 long done = totalWaitingTime - millisUntilFinished;
                 if(factoryProgressBar != null) {
                     factoryProgressBar.setProgress((int) (done * 100 / totalWaitingTime));
                 }
                 if(timeLeftTextView != null){
-                    long milliSeconds = millisUntilFinished % 1000;
-                    long seconds = millisUntilFinished / 1000;
-                    long secondsToDisplay = seconds % 60;
-                    long minutes = seconds / 1000;
-                    timeLeftTextView.setText(minutes + ":" + secondsToDisplay +":" + milliSeconds);
+                    timeLeftTextView.setText(countDownUtil.getMinutes() + ":" + countDownUtil.getSeconds() +":" + countDownUtil.getMilliSeconds());
                 }
                 setMillisUntilFinished(millisUntilFinished);
             }

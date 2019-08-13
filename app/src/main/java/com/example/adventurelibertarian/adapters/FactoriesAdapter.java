@@ -1,6 +1,5 @@
 package com.example.adventurelibertarian.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.adventurelibertarian.Activities.MainActivity;
 import com.example.adventurelibertarian.R;
 import com.example.adventurelibertarian.models.Factory;
 import com.example.adventurelibertarian.utils.CurrencyUtil;
@@ -26,7 +24,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.FactoryHolder> {
 
+    public static int backgroundColor = -1;
+
     private List<Factory> factories = new ArrayList<>();
+
+    public FactoriesAdapter(List<Factory> factories){
+        this.factories.clear();
+        this.factories = factories;
+    }
 
     @NonNull
     @Override
@@ -44,9 +49,9 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
         return factories.size();
     }
 
-    public void setFactories(List<Factory> factories, MainActivity mainActivity) {
-        this.factories.clear();
-        this.factories = factories;
+    public void changeBackgroundColor(int color){
+        backgroundColor = color;
+        notifyDataSetChanged();
     }
 
     public class FactoryHolder extends RecyclerView.ViewHolder implements SharedPreferencesConstants {
@@ -61,8 +66,13 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
         private ImageView lockImageView;
         private View blurImageView;
 
+        private View rootView;
+
         public FactoryHolder(@NonNull View itemView) {
             super(itemView);
+
+            rootView = itemView;
+
             circleImageView = itemView.findViewById(R.id.factory_image_id);
             levelTextView = itemView.findViewById(R.id.level_textView_id);
             incomeTextView = itemView.findViewById(R.id.income_text_view_id);
@@ -80,7 +90,6 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
             updateLevelTextView(factory);
             updateUpgradeTextView(factory);
             String managerMoneyFormatted = String.format("%.2f", factory.getManagerPrice());
-            Log.e("tagi", managerMoneyFormatted);
             managerButton.setText("manager: " + managerMoneyFormatted + CurrencyUtil.reverseCurrencies.get(factory.getManagerZeroes()));
             if (factory.getHasManager() || !factory.isOpen()) {
                 managerButton.setVisibility(View.INVISIBLE);
@@ -94,6 +103,11 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
 
             factory.setFactoryProgressBar(factoryProgressBar);
             factory.setTimeLeftTextView(timeLeftTextView);
+
+            if(backgroundColor != -1){
+                rootView.setBackgroundColor(backgroundColor);
+            }
+
             setActions(factory);
         }
 

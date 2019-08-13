@@ -45,8 +45,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     MainActivityPresenter mainActivityPresenter = new MainActivityPresenter(this);
 
+    public static MainActivity mainActivity;
+
     public List<Factory> factories = new ArrayList<>();
     private RecyclerView factoriesRecyclerView;
+    private FactoriesAdapter factoriesAdapter;
 
     private ToggleButton resetButton;
 
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mainActivity = this;
+
         CurrencyUtil.initCurrencies();
 
         initFactories();
@@ -72,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void initFactories() {
         factories.clear();
-        Factory agricultureFactory = new Factory(0, 1, 0, 1.3,
+        Factory agricultureFactory = new Factory(0, 1, 0, 2.3,
                 10, 0,1.4, 100, 0, 1000, R.drawable.toxi, mainActivityPresenter);
 
         agricultureFactory.setOpen(true);
@@ -99,6 +104,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         factories.add(parliament);
     }
 
+    public void redrawFactories(){
+        factoriesRecyclerView.setAdapter(null);
+        factoriesRecyclerView.setLayoutManager(null);
+        factoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        factoriesRecyclerView.setAdapter(factoriesAdapter);
+    }
+
     private void initUI() {
         currentMoneyTextView = findViewById(R.id.current_money_id);
 
@@ -122,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void initOnRewardAds() {
-//        MobileAds.initialize(this, "ca-app-pub-3725698160831098~2099509642");
         rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
         rewardedVideoAd.setRewardedVideoAdListener(this);
 
@@ -140,8 +151,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void initRecyclerView() {
         factoriesRecyclerView = findViewById(R.id.factories_recycler_view_id);
-        FactoriesAdapter factoriesAdapter = new FactoriesAdapter();
-        factoriesAdapter.setFactories(factories, this);
+        factoriesAdapter = new FactoriesAdapter(factories);
         factoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         factoriesRecyclerView.setAdapter(factoriesAdapter);
     }
@@ -266,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             }
         }
         editor.apply();
-        if (longestTimeUntilFinished >= 5000) {
+        if (longestTimeUntilFinished >= 50000) {
             AlarmManagerUtil.setAlarmInTime(this, longestTimeUntilFinished);
         }
     }

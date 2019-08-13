@@ -5,14 +5,29 @@
     android:layout_height="100dp"
     android:layout_marginBottom="50dp">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/first_vertical_guideline_id"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".25" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/second_vertical_guideline_id"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".6" />
+
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/factory_image_id"
-        android:layout_width="80dp"
+        android:layout_width="0dp"
         android:layout_height="80dp"
         android:layout_marginStart="10dp"
         app:civ_border_color="#000"
         app:civ_border_width="2dp"
+        app:layout_constraintEnd_toEndOf="@+id/first_vertical_guideline_id"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,18 +48,19 @@
         android:text="level"
         android:textColor="#FFF"
         android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="@+id/factory_evolution_progress_bar_id"
         app:layout_constraintBottom_toBottomOf="@id/factory_evolution_progress_bar_id"
         app:layout_constraintEnd_toEndOf="@id/factory_evolution_progress_bar_id"
-        app:layout_constraintStart_toStartOf="@id/factory_evolution_progress_bar_id" />
+        app:layout_constraintStart_toStartOf="@id/factory_evolution_progress_bar_id"
+        app:layout_constraintTop_toTopOf="@+id/factory_evolution_progress_bar_id" />
 
     <Button
         android:id="@+id/manager_button_id"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:minWidth="0dp"
         android:textSize="8sp"
+        app:layout_constraintStart_toStartOf="@+id/second_vertical_guideline_id"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -61,11 +77,13 @@
         android:id="@+id/upgrade_button_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="0dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:textSize="10sp"
+        android:backgroundTint="#FFEB3B"
+        android:textColor="#000"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/factory_image_id"
-        app:layout_constraintStart_toStartOf="@+id/progressbar_id" />
+        app:layout_constraintStart_toStartOf="@+id/progressbar_id"/>
 
     <ProgressBar
         android:id="@+id/progressbar_id"
@@ -76,19 +94,18 @@
         android:layout_marginTop="20dp"
         android:progress="0"
         android:progressDrawable="@drawable/my_custom_progress_bar_theme"
-        app:layout_constraintEnd_toEndOf="@+id/upgrade_button_id"
-        app:layout_constraintStart_toEndOf="@+id/factory_image_id"
+        app:layout_constraintEnd_toEndOf="@+id/second_vertical_guideline_id"
+        app:layout_constraintStart_toEndOf="@+id/first_vertical_guideline_id"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/times_left_text_view_id"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="0:0:0"
         android:textSize="9sp"
-        app:layout_constraintBottom_toBottomOf="@id/progressbar_id"
-        app:layout_constraintStart_toEndOf="@id/progressbar_id"
-        app:layout_constraintTop_toTopOf="@id/progressbar_id" />
+        app:layout_constraintStart_toStartOf="@+id/second_vertical_guideline_id"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <View
         android:id="@+id/blur_view_id"
