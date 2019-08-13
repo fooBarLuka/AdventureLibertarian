@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adventurelibertarian.adapters.ShopAdapter;
-import com.example.adventurelibertarian.models.ShopModel;
+import com.example.adventurelibertarian.models.ColorModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +44,12 @@ public class ShopFragment extends Fragment {
         return resultView;
     }
 
-    private List<ShopModel> getBackgroundColorItems(){
-        List<ShopModel> shopModels = new ArrayList<>();
+    private List<ColorModel> getBackgroundColorItems(){
+        List<ColorModel> shopModels = new ArrayList<>();
 
-        shopModels.add(new ShopModel(Color.parseColor("#ffffff"), 1000,0));
-        shopModels.add(new ShopModel(Color.parseColor("#000000"), 100000,0));
-        shopModels.add(new ShopModel(Color.RED, 1000,6));
+        shopModels.add(new ColorModel(Color.parseColor("#ffffff"), 1000,0));
+        shopModels.add(new ColorModel(Color.parseColor("#000000"), 100000,0));
+        shopModels.add(new ColorModel(Color.RED, 1000,6));
 
         return shopModels;
     }

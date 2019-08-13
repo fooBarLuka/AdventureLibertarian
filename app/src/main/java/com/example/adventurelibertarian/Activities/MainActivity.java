@@ -2,6 +2,8 @@ package com.example.adventurelibertarian.Activities;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.adventurelibertarian.MainActivityPresenter;
 import com.example.adventurelibertarian.R;
 import com.example.adventurelibertarian.ShopFragment;
+import com.example.adventurelibertarian.database.MyDataBase;
+import com.example.adventurelibertarian.models.ColorModel;
 import com.example.adventurelibertarian.utils.AlarmManagerUtil;
 import com.example.adventurelibertarian.utils.SharedPreferencesConstants;
 import com.example.adventurelibertarian.adapters.FactoriesAdapter;
@@ -66,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setContentView(R.layout.activity_main);
 
         mainActivity = this;
+
+        MyDataBase.buildDatabase(this);
 
         CurrencyUtil.initCurrencies();
 
@@ -117,14 +123,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         resetButton = findViewById(R.id.reset_toggle_button_id);
 
         shopButton = findViewById(R.id.shop_button_id);
+
         fragmentManager = getSupportFragmentManager();
+        NotificationsUtil.createNotificationChannel(this);
 
         initBonusImageView();
 
         loadGame();
         initRecyclerView();
 
-        NotificationsUtil.createNotificationChannel(this);
     }
 
     private void initBonusImageView() {
@@ -162,7 +169,47 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mainActivityPresenter.loadFactories(factories, preferences);
             mainActivityPresenter.loadMoney(preferences);
             mainActivityPresenter.loadOfflineMoneyAndProgresses(getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE));
+            loadFactoriesColor();
+        } else {
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    List<ColorModel> colorModels = new ArrayList<>();
+
+                    ColorModel defaultColorModel = new ColorModel(Color.parseColor("#ffffff"), 1000,0);
+                    defaultColorModel.bought = true;
+                    defaultColorModel.set = true;
+                    colorModels.add(defaultColorModel);
+
+                    colorModels.add(new ColorModel(Color.parseColor("#000000"), 100000,0));
+                    colorModels.add(new ColorModel(Color.RED, 1000,6));
+
+                    MyDataBase.getInstance().getColorDao().createAll(colorModels);
+                }
+            });
         }
+    }
+
+    private void loadFactoriesColor(){
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<ColorModel> colorModels = MyDataBase.getInstance().getColorDao().getAllColors();
+                for(int i = 0; i < colorModels.size(); i++){
+                    if(colorModels.get(i).set){
+                        final int finalI = i;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                FactoriesAdapter.backgroundColor = colorModels.get(finalI).color;
+                                redrawFactories();
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
+        });
     }
 
 
