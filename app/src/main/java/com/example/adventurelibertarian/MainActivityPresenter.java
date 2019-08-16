@@ -17,9 +17,15 @@ public class MainActivityPresenter implements SharedPreferencesConstants {
     private int offlineMoneyZeroes = 0;
 
     private MainActivity mainActivity;
+    private static MainActivityPresenter mainActivityPresenter;
 
     public MainActivityPresenter(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
+        this.mainActivityPresenter = this;
+    }
+
+    public static MainActivityPresenter getInstance(){
+        return mainActivityPresenter;
     }
 
     public void loadFactories(List<Factory> factories, SharedPreferences preferences) {

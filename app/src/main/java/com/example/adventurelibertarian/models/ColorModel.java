@@ -11,7 +11,7 @@ public class ColorModel {
         this.zeroes = zeroes;
     }
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public long id;
 
     public int color;

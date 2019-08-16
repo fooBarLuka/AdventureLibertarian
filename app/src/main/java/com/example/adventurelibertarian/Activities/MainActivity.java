@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void initFactories() {
         factories.clear();
-        Factory agricultureFactory = new Factory(0, 1, 0, 2.3,
+        Factory agricultureFactory = new Factory(0, 1, 0, 2.0,
                 10, 0,1.4, 100, 0, 1000, R.drawable.toxi, mainActivityPresenter);
 
         agricultureFactory.setOpen(true);
@@ -171,22 +171,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mainActivityPresenter.loadOfflineMoneyAndProgresses(getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE));
             loadFactoriesColor();
         } else {
-            AsyncTask.execute(new Runnable() {
-                @Override
-                public void run() {
-                    List<ColorModel> colorModels = new ArrayList<>();
-
-                    ColorModel defaultColorModel = new ColorModel(Color.parseColor("#ffffff"), 1000,0);
-                    defaultColorModel.bought = true;
-                    defaultColorModel.set = true;
-                    colorModels.add(defaultColorModel);
-
-                    colorModels.add(new ColorModel(Color.parseColor("#000000"), 100000,0));
-                    colorModels.add(new ColorModel(Color.RED, 1000,6));
-
-                    MyDataBase.getInstance().getColorDao().createAll(colorModels);
-                }
-            });
+            MyDataBase.initializeColorModels();
         }
     }
 

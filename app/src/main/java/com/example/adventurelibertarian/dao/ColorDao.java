@@ -1,4 +1,4 @@
-package com.example.adventurelibertarian;
+package com.example.adventurelibertarian.dao;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -20,5 +20,8 @@ public interface ColorDao {
 
     @Update
     void updateColorModel(ColorModel colorModel);
+
+    @Query("UPDATE ColorModel SET 'set' = :set")
+    void setAllToFalse(boolean set);
 
 }
