@@ -11,9 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adventurelibertarian.Activities.MainActivity;
-import com.example.adventurelibertarian.MainActivityPresenter;
+import com.example.adventurelibertarian.presenter.MainActivityPresenter;
 import com.example.adventurelibertarian.R;
-import com.example.adventurelibertarian.ShopFragment;
 import com.example.adventurelibertarian.database.MyDataBase;
 import com.example.adventurelibertarian.models.ColorModel;
 import com.example.adventurelibertarian.utils.CurrencyUtil;
@@ -24,6 +23,8 @@ import java.util.List;
 public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder> {
 
     List<ColorModel> colorModels = new ArrayList();
+
+    private static ColorHolder colorHolder;
 
 
     @NonNull
@@ -50,7 +51,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder>
 
         private TextView priceTextView;
         private View colorView;
-        private Button buyButton;
+        private Button actionButton;
         private TextView colorSetTextView;
         private ColorModel colorModel;
 
@@ -58,7 +59,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder>
             super(itemView);
             priceTextView = itemView.findViewById(R.id.price_text_view_id);
             colorView = itemView.findViewById(R.id.color_view_id);
-            buyButton = itemView.findViewById(R.id.buy_button_id);
+            actionButton = itemView.findViewById(R.id.buy_button_id);
             colorSetTextView = itemView.findViewById(R.id.set_text_view_id);
         }
 
@@ -67,30 +68,53 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder>
             priceTextView.setText(String.format("%.2f",colorModel.price) + CurrencyUtil.reverseCurrencies.get(colorModel.zeroes));
             colorView.setBackgroundColor(colorModel.color);
             if(colorModel.set){
-                buyButton.setVisibility(View.INVISIBLE);
+                actionButton.setVisibility(View.INVISIBLE);
+                colorHolder = this;
             } else {
                 if(colorModel.bought){
-                    buyButton.setText("set color");
+                    actionButton.setText("SET COLOR");
                 }
             }
 
             setUIActions();
         }
 
+        private void removeSetColor(){
+            colorModel.set = false;
+            updateUIAfterRemovingSetColor();
+        }
+
+        private void updateUIAfterBuying(){
+            actionButton.setText("SET COLOR");
+        }
+
+        private void updateUIAfterSettingColor(){
+            actionButton.setVisibility(View.INVISIBLE);
+            colorSetTextView.setVisibility(View.VISIBLE);
+        }
+
+        private void updateUIAfterRemovingSetColor(){
+            actionButton.setVisibility(View.VISIBLE);
+            actionButton.setText("SET COLOR");
+            colorSetTextView.setVisibility(View.INVISIBLE);
+        }
+
         private void setUIActions(){
-            buyButton.setOnClickListener(new View.OnClickListener() {
+            actionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(colorModel.bought) {
-                        buyButton.setVisibility(View.INVISIBLE);
-                        colorSetTextView.setVisibility(View.VISIBLE);
-
+                    if(colorModel.bought) { // if already bought, user wants to set color
                         FactoriesAdapter.backgroundColor = colorModel.color;
+
+                        colorHolder.removeSetColor();
+                        colorHolder = ColorHolder.this;
+
+                        updateUIAfterSettingColor();
 
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
-                                MyDataBase.getInstance().getColorDao().setAllToFalse(false);
+                                MyDataBase.getInstance().getColorDao().setChosenColor(false, colorHolder.colorModel.id);
                                 colorModel.set = true;
                                 MyDataBase.updateColorModelAsynchronous(colorModel);
                             }
@@ -102,6 +126,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder>
                             colorModel.bought = true;
                             MyDataBase.updateColorModelAsynchronous(colorModel);
                             MainActivityPresenter.getInstance().subtractPrice(colorModel.price, colorModel.zeroes);
+                            updateUIAfterBuying();
                         }
                     }
                 }

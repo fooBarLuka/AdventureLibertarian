@@ -4,7 +4,7 @@ import android.os.CountDownTimer;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.adventurelibertarian.MainActivityPresenter;
+import com.example.adventurelibertarian.presenter.MainActivityPresenter;
 import com.example.adventurelibertarian.utils.CountDownUtil;
 
 public class Factory {
@@ -168,7 +168,7 @@ public class Factory {
         setWorking(true);
         final long totalWaitingTime = getWaitingTime();
         final CountDownUtil countDownUtil = new CountDownUtil(timeLeft);
-        new CountDownTimer(timeLeft, countDownUpdateInterval) {
+        new CountDownTimer(timeLeft, 10) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -281,8 +281,6 @@ public class Factory {
     private int zeroes;
     private double managerPrice;
     private int managerZeroes;
-
-    private int countDownUpdateInterval = 30;
 
     private ProgressBar factoryProgressBar;
     private TextView timeLeftTextView;

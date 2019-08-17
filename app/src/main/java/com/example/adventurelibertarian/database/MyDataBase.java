@@ -9,7 +9,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.adventurelibertarian.dao.ColorDao;
-import com.example.adventurelibertarian.ShopFragment;
+import com.example.adventurelibertarian.fragment.ShopFragment;
 import com.example.adventurelibertarian.models.ColorModel;
 
 import java.util.ArrayList;
@@ -35,16 +35,6 @@ public abstract class MyDataBase extends RoomDatabase {
             @Override
             public void run() {
                 getInstance().getColorDao().updateColorModel(colorModel);
-                try {
-                    ShopFragment.getInstance().getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ShopFragment.getInstance().redrawShopModels();
-                        }
-                    });
-                } catch(Exception ignored){
-
-                }
             }
         });
     }
@@ -55,15 +45,21 @@ public abstract class MyDataBase extends RoomDatabase {
             public void run() {
                 List<ColorModel> colorModels = new ArrayList<>();
 
-                ColorModel defaultColorModel = new ColorModel(Color.parseColor("#ffffff"), 0,0);
+                ColorModel defaultColorModel = new ColorModel(Color.parseColor("#cccccc"), 0,0);
                 defaultColorModel.bought = true;
                 defaultColorModel.set = true;
-                colorModels.add(defaultColorModel);
+                colorModels.add(defaultColorModel);//FFFF3D00 orange red // FFFF1744 purple red
 
-                colorModels.add(new ColorModel(Color.parseColor("#000000"), 100000,0));
-                colorModels.add(new ColorModel(Color.RED, 1000,6));
+                colorModels.add(new ColorModel(Color.parseColor("#b0000000"), 100000,0));
+                colorModels.add(new ColorModel(Color.parseColor("#EDBB0707"), 1000,6));
                 colorModels.add(new ColorModel(Color.parseColor("#FF4CAF50"), 1000,9));
-                colorModels.add(new ColorModel(Color.GREEN, 100, 12));
+                colorModels.add(new ColorModel(Color.parseColor("#77FFEA00"), 100, 12));
+                colorModels.add(new ColorModel(Color.parseColor("#FFFFEA00"), 100, 15));
+
+                colorModels.add(new ColorModel(Color.parseColor("#FFFF3D00"), 100, 15));
+                colorModels.add(new ColorModel(Color.parseColor("#FFFF1744"), 100, 15));
+
+
 
 
                 MyDataBase.getInstance().getColorDao().createAll(colorModels);
@@ -71,6 +67,6 @@ public abstract class MyDataBase extends RoomDatabase {
         });
     }
 
-    public static final String MY_DATABASE_NAME = "lukas db name";
+    private static final String MY_DATABASE_NAME = "lukas db name";
     private static MyDataBase myDataBase;
 }

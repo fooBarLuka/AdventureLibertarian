@@ -20,7 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="$0"
-        app:layout_constraintBottom_toBottomOf="@id/top_horizontal_guideline_id"
         app:layout_constraintStart_toEndOf="@+id/profile_image_id"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,6 +58,7 @@
         android:id="@+id/factories_recycler_view_id"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/cardview_dark_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@+id/top_horizontal_guideline_id" />
 

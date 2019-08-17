@@ -2,7 +2,6 @@ package com.example.adventurelibertarian.Activities;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,9 +17,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.adventurelibertarian.MainActivityPresenter;
+import com.example.adventurelibertarian.presenter.MainActivityPresenter;
 import com.example.adventurelibertarian.R;
-import com.example.adventurelibertarian.ShopFragment;
+import com.example.adventurelibertarian.fragment.ShopFragment;
 import com.example.adventurelibertarian.database.MyDataBase;
 import com.example.adventurelibertarian.models.ColorModel;
 import com.example.adventurelibertarian.utils.AlarmManagerUtil;
@@ -83,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void initFactories() {
         factories.clear();
-        Factory agricultureFactory = new Factory(0, 1, 0, 2.0,
-                10, 0,1.4, 100, 0, 1000, R.drawable.toxi, mainActivityPresenter);
+        Factory agricultureFactory = new Factory(0, 1, 0, 4.0,
+                10, 0,1.4, 100, 0, 300, R.drawable.toxi, mainActivityPresenter);
 
         agricultureFactory.setOpen(true);
         factories.add(agricultureFactory);

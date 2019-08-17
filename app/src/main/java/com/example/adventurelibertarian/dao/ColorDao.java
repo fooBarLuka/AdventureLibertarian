@@ -21,7 +21,7 @@ public interface ColorDao {
     @Update
     void updateColorModel(ColorModel colorModel);
 
-    @Query("UPDATE ColorModel SET 'set' = :set")
-    void setAllToFalse(boolean set);
+    @Query("UPDATE ColorModel SET 'set' = :chosen WHERE id = :id")
+    void setChosenColor(boolean chosen, long id);
 
 }
