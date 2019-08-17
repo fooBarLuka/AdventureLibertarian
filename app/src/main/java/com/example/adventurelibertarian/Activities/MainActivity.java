@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         MainActivityPresenter.getInstance().initFactories();
         initUI();
+        loadGame();
         initOnRewardAds();
         initUIActions();
     }
@@ -96,9 +97,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         initBonusImageView();
 
-        loadGame();
         initRecyclerView();
-
     }
 
     private void initBonusImageView() {
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (!preferences.getBoolean(NEW_PLAYER, true)) {
             mainActivityPresenter.loadFactories(preferences);
             mainActivityPresenter.loadMoney(preferences);
-            mainActivityPresenter.loadOfflineMoneyAndProgresses(getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE));
+            mainActivityPresenter.loadOfflineMoneyAndProgresses(preferences);
             loadFactoriesColor();
         } else {
             MyDataBase.initializeColorModels();
