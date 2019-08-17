@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     public static MainActivity mainActivity;
 
-    public List<Factory> factories = new ArrayList<>();
     private RecyclerView factoriesRecyclerView;
     private FactoriesAdapter factoriesAdapter;
 
@@ -74,45 +73,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         CurrencyUtil.initCurrencies();
 
-        initFactories();
+        MainActivityPresenter.getInstance().initFactories();
         initUI();
         initOnRewardAds();
         initUIActions();
     }
 
-    private void initFactories() {
-        factories.clear();
-        Factory agricultureFactory = new Factory(0, 1, 0, 4.0,
-                10, 0,1.4, 100, 0, 300, R.drawable.toxi, mainActivityPresenter);
-
-        agricultureFactory.setOpen(true);
-        factories.add(agricultureFactory);
-
-        Factory xinkaliFactory = new Factory(1, 20, 0, 1.4,
-                50,0, 1.5, 2000, 0, 2000, R.drawable.xink, mainActivityPresenter);
-
-        factories.add(xinkaliFactory);
-
-        Factory bateGeneralsFactory = new Factory(2, 1000, 0, 1.6,
-                1000, 0, 1.6, 10000, 0, 10000, R.drawable.dummy_bate, mainActivityPresenter);
-
-        factories.add(bateGeneralsFactory);
-
-        Factory chips = new Factory(3, 100000, 0, 1.7,
-                200000, 0,1.65, 10000, 3, 100000, R.drawable.chips, mainActivityPresenter);
-
-        factories.add(chips);
-
-        Factory parliament = new Factory(4, 100000, 9, 2.2,
-                100000, 6,2.1, 10000, 6,150000, R.drawable.parliament, mainActivityPresenter);
-
-        factories.add(parliament);
-    }
-
     public void redrawFactories(){
         factoriesRecyclerView.setAdapter(null);
-        factoriesRecyclerView.setLayoutManager(null);
-        factoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         factoriesRecyclerView.setAdapter(factoriesAdapter);
     }
 
@@ -157,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void initRecyclerView() {
         factoriesRecyclerView = findViewById(R.id.factories_recycler_view_id);
-        factoriesAdapter = new FactoriesAdapter(factories);
+        factoriesAdapter = new FactoriesAdapter(MainActivityPresenter.getInstance().getFactories());
         factoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         factoriesRecyclerView.setAdapter(factoriesAdapter);
     }
@@ -165,12 +133,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void loadGame() {
         SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         if (!preferences.getBoolean(NEW_PLAYER, true)) {
-            mainActivityPresenter.loadFactories(factories, preferences);
+            mainActivityPresenter.loadFactories(preferences);
             mainActivityPresenter.loadMoney(preferences);
             mainActivityPresenter.loadOfflineMoneyAndProgresses(getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE));
             loadFactoriesColor();
         } else {
             MyDataBase.initializeColorModels();
+            MyDataBase.initializeManagerModels();
         }
     }
 
@@ -207,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             @Override
             public void onClick(View v) {
                 long twelveHour = 1000 * 60 * 12;
-                mainActivityPresenter.getBonusForTime(twelveHour, factories);
+                mainActivityPresenter.getBonusForTime(twelveHour);
             }
         });
 
@@ -291,26 +260,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onStop() {
         super.onStop();
-        mainActivityPresenter.saveInSharedPreferences(factories, resetButton.isChecked());
-        sendNotificationAndSaveDoneTime();
+        mainActivityPresenter.saveInSharedPreferences(getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE),resetButton.isChecked());
+        MainActivityPresenter.getInstance().sendNotificationAndSaveDoneTime(getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE));
     }
 
-    private void sendNotificationAndSaveDoneTime() {
-        SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE).edit();
-        long longestTimeUntilFinished = 0;
-        for (int i = 0; i < factories.size(); i++) {
-            Factory factory = factories.get(i);
-            long timeLeft = factory.getMillisUntilFinished();
-            editor.putLong(i + "done", factory.getWaitingTime() - timeLeft);
-            if (timeLeft > longestTimeUntilFinished) {
-                longestTimeUntilFinished = timeLeft;
-            }
-        }
-        editor.apply();
-        if (longestTimeUntilFinished >= 50000) {
-            AlarmManagerUtil.setAlarmInTime(this, longestTimeUntilFinished);
-        }
-    }
+
 
     @Override
     public void onRewarded(RewardItem rewardItem) {

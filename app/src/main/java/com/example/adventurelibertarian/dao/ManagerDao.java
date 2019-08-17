@@ -1,6 +1,7 @@
 package com.example.adventurelibertarian.dao;
 
 import androidx.room.Dao;
+import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -11,9 +12,12 @@ import java.util.List;
 @Dao
 public interface ManagerDao {
 
+    @Insert
+    void createAll(List<ManagerModel> managerModels);
+
     @Query("SELECT * FROM ManagerModel")
     List<ManagerModel> getManagers();
 
-    @Query("UPDATE ManagerModel Set bought = :bought WHERE factoryId = :factoryId")
-    void updateManager(boolean bought, int factoryId);
+    @Update
+    void updateManagerModel(ManagerModel managerModel);
 }

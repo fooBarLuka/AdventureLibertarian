@@ -5,19 +5,20 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class ManagerModel {
-    public ManagerModel(int factoryId, double price, int zeroes, boolean bought){
+    public ManagerModel(int factoryId, double price, int zeroes){
         this.factoryId = factoryId;
         this.price = price;
         this.zeroes = zeroes;
-        this.bought = bought;
     }
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    public long id;
+
     public int factoryId;
 
     public double price;
 
     public int zeroes;
 
-    public boolean bought;
+    public boolean bought = false;
 }
