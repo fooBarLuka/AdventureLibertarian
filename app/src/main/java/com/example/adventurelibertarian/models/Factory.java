@@ -1,5 +1,6 @@
 package com.example.adventurelibertarian.models;
 
+import android.os.AsyncTask;
 import android.os.CountDownTimer;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -10,8 +11,8 @@ import com.example.adventurelibertarian.utils.CountDownUtil;
 public class Factory {
 
     public Factory(int id, double income, int zeroes, double incomeMultiplier,
-                   double upgradePrice, int upgradeZeroes, double upgradePriceMultiplier, double managerPrice,
-                   int managerZeroes, long waitingTime, int imageId, MainActivityPresenter mainActivityPresenter) {
+                   double upgradePrice, int upgradeZeroes, double upgradePriceMultiplier,
+                   long waitingTime, int imageId, MainActivityPresenter mainActivityPresenter) {
         this.id = id;
         this.income = income;
         this.zeroes = zeroes;
@@ -19,8 +20,6 @@ public class Factory {
         this.upgradePrice = upgradePrice;
         this.upgradeZeroes = upgradeZeroes;
         this.upgradePriceMultiplier = upgradePriceMultiplier;
-        this.managerPrice = managerPrice;
-        this.managerZeroes = managerZeroes;
         this.waitingTime = waitingTime;
         this.imageId = imageId;
         this.mainActivityPresenter = mainActivityPresenter;
@@ -140,16 +139,8 @@ public class Factory {
         return hasManager;
     }
 
-    public double getManagerPrice() {
-        return managerPrice;
-    }
-
     public int getImageId() {
         return imageId;
-    }
-
-    public int getManagerZeroes() {
-        return managerZeroes;
     }
 
     public int getId() {
@@ -166,21 +157,21 @@ public class Factory {
 
     public void startWorking(final long timeLeft) {
         setWorking(true);
-        final long totalWaitingTime = getWaitingTime();
         final CountDownUtil countDownUtil = new CountDownUtil(timeLeft);
+
         new CountDownTimer(timeLeft, 10) {
 
             @Override
             public void onTick(long millisUntilFinished) {
                 countDownUtil.onTickHappened(millisUntilFinished);
-                long done = totalWaitingTime - millisUntilFinished;
-                if(factoryProgressBar != null) {
-                    factoryProgressBar.setProgress((int) (done * 100 / totalWaitingTime));
-                }
-                if(timeLeftTextView != null){
-                    timeLeftTextView.setText(countDownUtil.getMinutes() + ":" + countDownUtil.getSeconds() +":" + countDownUtil.getMilliSeconds());
-                }
+                long done = waitingTime - millisUntilFinished;
                 setMillisUntilFinished(millisUntilFinished);
+                if (factoryProgressBar != null) {
+                    factoryProgressBar.setProgress((int) (done * 100 / waitingTime));
+                }
+                if (timeLeftTextView != null) {
+                    timeLeftTextView.setText(countDownUtil.getMinutes() + ":" + countDownUtil.getSeconds() + ":" + countDownUtil.getMilliSeconds());
+                }
             }
 
             @Override
@@ -188,13 +179,13 @@ public class Factory {
                 if (factoryProgressBar != null) {
                     factoryProgressBar.setProgress(0);
                 }
-                if(timeLeftTextView != null){
+                if (timeLeftTextView != null) {
                     timeLeftTextView.setText("0:0:0");
                 }
                 mainActivityPresenter.sumMoney(getIncome(), getZeroes());
 
                 setWorking(false);
-                setMillisUntilFinished(totalWaitingTime);
+                setMillisUntilFinished(waitingTime);
 
                 if (getHasManager()) {
                     startWorking(waitingTime);
@@ -203,8 +194,15 @@ public class Factory {
         }.start();
     }
 
+    public void hireManager() {
+        hasManager = true;
+        if (open && !working) {
+            startWorking(waitingTime);
+        }
+    }
+
     public void loadFactoryProgress(long currentTime, long prevTime, long millisDone) {
-        if (isOpen() && millisDone != waitingTime) {
+        if (isOpen() && millisDone != 0) {
             long timePast = currentTime - prevTime;
             long fullTime = millisDone + timePast;
             if (fullTime < getWaitingTime()) {
@@ -245,18 +243,6 @@ public class Factory {
         return false;
     }
 
-    public boolean hireManager() {
-        if (mainActivityPresenter.hasEnoughMoney(getManagerPrice(), getManagerZeroes())) {
-            mainActivityPresenter.subtractPrice(getManagerPrice(), getManagerZeroes());
-            setHasManager(true);
-            if (!isWorking() && isOpen()) {
-                startWorking(waitingTime);
-            }
-            return true;
-        }
-        return false;
-    }
-
     public void setFactoryProgressBar(ProgressBar factoryProgressBar) {
         this.factoryProgressBar = factoryProgressBar;
     }
@@ -277,12 +263,11 @@ public class Factory {
     private boolean working = false;
     private boolean hasManager = false;
     private int level = 0;
-    private int upgradeZeroes = 0;
+    private int upgradeZeroes;
     private int zeroes;
-    private double managerPrice;
-    private int managerZeroes;
 
     private ProgressBar factoryProgressBar;
     private TextView timeLeftTextView;
     private MainActivityPresenter mainActivityPresenter;
+
 }

@@ -49,17 +49,12 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
         return factories.size();
     }
 
-    public void changeBackgroundColor(int color){
-        backgroundColor = color;
-        notifyDataSetChanged();
-    }
 
     public class FactoryHolder extends RecyclerView.ViewHolder implements SharedPreferencesConstants {
         private CircleImageView circleImageView;
         private TextView levelTextView;
         private TextView incomeTextView;
         private Button upgradeButton;
-        private Button managerButton;
         private ProgressBar factoryProgressBar;
         private ProgressBar factoryEvolutionProgressBar;
         private TextView timeLeftTextView;
@@ -77,7 +72,6 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
             levelTextView = itemView.findViewById(R.id.level_textView_id);
             incomeTextView = itemView.findViewById(R.id.income_text_view_id);
             upgradeButton = itemView.findViewById(R.id.upgrade_button_id);
-            managerButton = itemView.findViewById(R.id.manager_button_id);
             factoryProgressBar = itemView.findViewById(R.id.progressbar_id);
             factoryEvolutionProgressBar = itemView.findViewById(R.id.factory_evolution_progress_bar_id);
             timeLeftTextView = itemView.findViewById(R.id.times_left_text_view_id);
@@ -89,11 +83,6 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
             Picasso.get().load(factory.getImageId()).into(circleImageView);
             updateLevelTextView(factory);
             updateUpgradeTextView(factory);
-            String managerMoneyFormatted = String.format("%.2f", factory.getManagerPrice());
-            managerButton.setText("manager: " + managerMoneyFormatted + CurrencyUtil.reverseCurrencies.get(factory.getManagerZeroes()));
-            if (factory.getHasManager() || !factory.isOpen()) {
-                managerButton.setVisibility(View.INVISIBLE);
-            }
             if (factory.isOpen()) {
                 lockImageView.setVisibility(View.INVISIBLE);
                 blurImageView.setVisibility(View.INVISIBLE);
@@ -112,20 +101,8 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
         }
 
         private void setActions(Factory factory) {
-            initManagerAction(factory);
             initUpgradeAction(factory);
             initWorkingAction(factory);
-        }
-
-        private void initManagerAction(final Factory factory) {
-            managerButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (factory.hireManager()) {
-                        managerButton.setVisibility(View.INVISIBLE);
-                    }
-                }
-            });
         }
 
         private void initUpgradeAction(final Factory factory) {
@@ -139,9 +116,6 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
                         updateEvolutionProgressPar(factory);
 
                         if (factory.getLevel() == 1) {
-                            if (!factory.getHasManager()) {
-                                managerButton.setVisibility(View.VISIBLE);
-                            }
                             lockImageView.setVisibility(View.INVISIBLE);
                             blurImageView.setVisibility(View.INVISIBLE);
                         }

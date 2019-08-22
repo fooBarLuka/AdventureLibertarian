@@ -36,28 +36,28 @@ public class MainActivityPresenter implements SharedPreferencesConstants {
     public void initFactories() {
         factories.clear();
         Factory agricultureFactory = new Factory(0, 1, 0, 4.0,
-                10, 0,1.4, 100, 0, 300, R.drawable.toxi, mainActivityPresenter);
+                10, 0,1.4,  300, R.drawable.toxi, mainActivityPresenter);
 
         agricultureFactory.setOpen(true);
         factories.add(agricultureFactory);
 
         Factory xinkaliFactory = new Factory(1, 20, 0, 1.4,
-                50,0, 1.5, 2000, 0, 2000, R.drawable.xink, mainActivityPresenter);
+                50,0, 1.5,  2000, R.drawable.xink, mainActivityPresenter);
 
         factories.add(xinkaliFactory);
 
         Factory bateGeneralsFactory = new Factory(2, 1000, 0, 1.6,
-                1000, 0, 1.6, 10000, 0, 10000, R.drawable.dummy_bate, mainActivityPresenter);
+                1000, 0, 1.6, 10000, R.drawable.dummy_bate, mainActivityPresenter);
 
         factories.add(bateGeneralsFactory);
 
         Factory chips = new Factory(3, 100000, 0, 1.7,
-                200000, 0,1.65, 10000, 3, 100000, R.drawable.chips, mainActivityPresenter);
+                200000, 0,1.65, 100000, R.drawable.chips, mainActivityPresenter);
 
         factories.add(chips);
 
         Factory parliament = new Factory(4, 100000, 9, 2.2,
-                100000, 6,2.1, 10000, 6,150000, R.drawable.parliament, mainActivityPresenter);
+                100000, 6,2.1, 150000, R.drawable.parliament, mainActivityPresenter);
 
         factories.add(parliament);
     }

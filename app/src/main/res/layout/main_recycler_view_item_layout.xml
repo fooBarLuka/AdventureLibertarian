@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:background="#FF1744"
     android:layout_margin="20dp">
 
     <androidx.constraintlayout.widget.Guideline
@@ -93,19 +92,6 @@
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <!--///////////////////////////////////////end of second part-->
-
-
-    <Button
-        android:id="@+id/manager_button_id"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:minWidth="0dp"
-        android:textSize="8sp"
-        app:layout_constraintStart_toStartOf="@+id/second_vertical_guideline_id"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/income_text_view_id"

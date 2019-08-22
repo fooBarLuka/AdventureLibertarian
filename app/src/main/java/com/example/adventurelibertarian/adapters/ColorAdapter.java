@@ -11,18 +11,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adventurelibertarian.Activities.MainActivity;
-import com.example.adventurelibertarian.presenter.MainActivityPresenter;
 import com.example.adventurelibertarian.R;
 import com.example.adventurelibertarian.database.MyDataBase;
 import com.example.adventurelibertarian.models.ColorModel;
+import com.example.adventurelibertarian.presenter.MainActivityPresenter;
 import com.example.adventurelibertarian.utils.CurrencyUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder> {
 
-    List<ColorModel> colorModels = new ArrayList();
+    public ColorAdapter(List<ColorModel> colorModels){
+        this.colorModels = colorModels;
+    }
+
+    private List<ColorModel> colorModels;
 
     private static ColorHolder colorHolder;
 
@@ -43,9 +46,6 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder>
         return colorModels.size();
     }
 
-    public void setItems(List<ColorModel> colorModels) {
-        this.colorModels = colorModels;
-    }
 
     public class ColorHolder extends RecyclerView.ViewHolder {
 
@@ -104,13 +104,6 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder>
                 @Override
                 public void onClick(View v) {
                     if(colorModel.bought) { // if already bought, user wants to set color
-                        FactoriesAdapter.backgroundColor = colorModel.color;
-
-                        colorHolder.removeSetColor();
-                        colorHolder = ColorHolder.this;
-
-                        updateUIAfterSettingColor();
-
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
@@ -120,6 +113,11 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder>
                             }
                         });
 
+                        updateUIAfterSettingColor();
+                        colorHolder.removeSetColor();
+                        colorHolder = ColorHolder.this;
+
+                        FactoriesAdapter.backgroundColor = colorModel.color;
                         MainActivity.mainActivity.redrawFactories();
                     } else {
                         if(MainActivityPresenter.getInstance().hasEnoughMoney(colorModel.price, colorModel.zeroes)){

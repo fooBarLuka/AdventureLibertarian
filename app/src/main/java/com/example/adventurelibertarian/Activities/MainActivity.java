@@ -17,17 +17,15 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.adventurelibertarian.presenter.MainActivityPresenter;
 import com.example.adventurelibertarian.R;
-import com.example.adventurelibertarian.fragment.ShopFragment;
-import com.example.adventurelibertarian.database.MyDataBase;
-import com.example.adventurelibertarian.models.ColorModel;
-import com.example.adventurelibertarian.utils.AlarmManagerUtil;
-import com.example.adventurelibertarian.utils.SharedPreferencesConstants;
 import com.example.adventurelibertarian.adapters.FactoriesAdapter;
-import com.example.adventurelibertarian.models.Factory;
+import com.example.adventurelibertarian.database.MyDataBase;
+import com.example.adventurelibertarian.fragment.ShopFragment;
+import com.example.adventurelibertarian.models.ColorModel;
+import com.example.adventurelibertarian.presenter.MainActivityPresenter;
 import com.example.adventurelibertarian.utils.CurrencyUtil;
 import com.example.adventurelibertarian.utils.NotificationsUtil;
+import com.example.adventurelibertarian.utils.SharedPreferencesConstants;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
@@ -35,7 +33,6 @@ import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -78,11 +75,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         loadGame();
         initOnRewardAds();
         initUIActions();
-    }
-
-    public void redrawFactories(){
-        factoriesRecyclerView.setAdapter(null);
-        factoriesRecyclerView.setAdapter(factoriesAdapter);
     }
 
     private void initUI() {
@@ -129,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         factoriesRecyclerView.setAdapter(factoriesAdapter);
     }
 
+    public void changeRecyclerViewBackgroundColor(int color){
+        factoriesRecyclerView.setBackgroundColor(color);
+    }
+
     private void loadGame() {
         SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         if (!preferences.getBoolean(NEW_PLAYER, true)) {
@@ -139,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         } else {
             MyDataBase.initializeColorModels();
             MyDataBase.initializeManagerModels();
+            MyDataBase.initializeBackgroundColorModels();
         }
     }
 
@@ -164,6 +161,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         });
     }
 
+    public void redrawFactories(){
+        factoriesRecyclerView.setAdapter(null);
+        factoriesRecyclerView.setAdapter(factoriesAdapter);
+    }
 
     public void updateCurrentMoney(double ownedMoney, int zeroes) {
         currentMoneyTextView.setText("$ " + String.format("%.2f", ownedMoney)+ CurrencyUtil.reverseCurrencies.get(zeroes));
