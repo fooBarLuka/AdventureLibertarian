@@ -119,9 +119,10 @@ public class MainActivityPresenter implements SharedPreferencesConstants {
             prevTime = preferences.getLong(SUBSTITUTE_CURRENT_TIME,0);
             currentTime = System.currentTimeMillis();
         }
+        long timePassed = currentTime - prevTime;
         for (int i = 0; i < factories.size(); i++) {
             long millisDone = preferences.getLong(i + "done", 0);
-            factories.get(i).loadFactoryProgress(currentTime, prevTime, millisDone);
+            factories.get(i).loadFactoryProgress(timePassed, millisDone);
         }
         sumMoney(offlineMoney, offlineMoneyZeroes);
         mainActivity.showAfterIdleDialog(offlineMoney, offlineMoneyZeroes);

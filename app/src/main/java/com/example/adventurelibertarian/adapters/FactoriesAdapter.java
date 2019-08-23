@@ -1,5 +1,6 @@
 package com.example.adventurelibertarian.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.adventurelibertarian.R;
 import com.example.adventurelibertarian.models.Factory;
 import com.example.adventurelibertarian.utils.CurrencyUtil;
+import com.example.adventurelibertarian.utils.MyCountDownTimer;
 import com.example.adventurelibertarian.utils.SharedPreferencesConstants;
 import com.squareup.picasso.Picasso;
 
@@ -128,9 +130,13 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
             factoryProgressBar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.e("progressbar", "onClick: ");
                     if (factory.isOpen()) {
+                        Log.e("progressbar", "onClick: open" );
                         if (!factory.isWorking()) {
-                            factory.startWorking(factory.getWaitingTime());
+                            Log.e("progressbar", "onClick: not working" );
+                            factory.setWorking(true);
+                            MyCountDownTimer.addFactory(factory);
                         }
                     }
                 }

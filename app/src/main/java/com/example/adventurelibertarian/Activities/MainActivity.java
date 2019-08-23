@@ -24,6 +24,7 @@ import com.example.adventurelibertarian.fragment.ShopFragment;
 import com.example.adventurelibertarian.models.ColorModel;
 import com.example.adventurelibertarian.presenter.MainActivityPresenter;
 import com.example.adventurelibertarian.utils.CurrencyUtil;
+import com.example.adventurelibertarian.utils.MyCountDownTimer;
 import com.example.adventurelibertarian.utils.NotificationsUtil;
 import com.example.adventurelibertarian.utils.SharedPreferencesConstants;
 import com.google.android.gms.ads.AdRequest;
@@ -75,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         loadGame();
         initOnRewardAds();
         initUIActions();
+
+        MyCountDownTimer.doWork();
     }
 
     private void initUI() {
@@ -261,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onStop() {
         super.onStop();
         mainActivityPresenter.saveInSharedPreferences(getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE),resetButton.isChecked());
-        MainActivityPresenter.getInstance().sendNotificationAndSaveDoneTime(getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE));
+        mainActivityPresenter.sendNotificationAndSaveDoneTime(getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE));
     }
 
 

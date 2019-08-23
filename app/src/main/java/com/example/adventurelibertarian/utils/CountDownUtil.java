@@ -1,7 +1,5 @@
 package com.example.adventurelibertarian.utils;
 
-import android.util.Log;
-
 public class CountDownUtil {
     public CountDownUtil(long fullTime){
         int seconds = (int) (fullTime / 1000);
@@ -12,8 +10,7 @@ public class CountDownUtil {
 
     }
 
-    public void onTickHappened(long newTimeLeft){
-        long timePassed = timeLeft - newTimeLeft;
+    public void onTickHappened(long timePassed){
 
         milliSeconds -= timePassed;
 
@@ -26,7 +23,6 @@ public class CountDownUtil {
             seconds += 60;
             minutes--;
         }
-        timeLeft = newTimeLeft;
     }
 
     public int getMilliSeconds() {

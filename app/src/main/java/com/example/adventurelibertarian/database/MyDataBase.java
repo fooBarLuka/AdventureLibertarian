@@ -55,6 +55,15 @@ public abstract class MyDataBase extends RoomDatabase {
         });
     }
 
+    public static void updateManagerModelAsynchronous(final ManagerModel managerModel){
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                getInstance().getManagerDao().updateManagerModel(managerModel);
+            }
+        });
+    }
+
     public static void initializeColorModels() {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -115,15 +124,6 @@ public abstract class MyDataBase extends RoomDatabase {
                 managerModels.add(new ManagerModel(4, "პარლამენტი", 10000, 9));
 
                 myDataBase.getManagerDao().createAll(managerModels);
-            }
-        });
-    }
-
-    public static void updateManagerModelAsynchronous(final ManagerModel managerModel){
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                getInstance().getManagerDao().updateManagerModel(managerModel);
             }
         });
     }

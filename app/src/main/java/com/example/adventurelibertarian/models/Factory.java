@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.example.adventurelibertarian.presenter.MainActivityPresenter;
 import com.example.adventurelibertarian.utils.CountDownUtil;
+import com.example.adventurelibertarian.utils.MyCountDownTimer;
 
 public class Factory {
 
@@ -151,68 +152,53 @@ public class Factory {
         return millisUntilFinished;
     }
 
-    public void setMillisUntilFinished(long millisUntilFinished) {
-        this.millisUntilFinished = millisUntilFinished;
-    }
+    public void onTimePassed(long timePassed){
+        millisUntilFinished -= timePassed;
+        if(millisUntilFinished < 0){
+            millisUntilFinished = waitingTime;
+            mainActivityPresenter.sumMoney(income, zeroes);
+            countDownUtil = new CountDownUtil(waitingTime);
+            if(!hasManager){
+                MyCountDownTimer.removeFactory(this);
+            }
+            working = false;
+        } else {
+            countDownUtil.onTickHappened(timePassed);
 
-    public void startWorking(final long timeLeft) {
-        setWorking(true);
-        final CountDownUtil countDownUtil = new CountDownUtil(timeLeft);
-
-        new CountDownTimer(timeLeft, 10) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                countDownUtil.onTickHappened(millisUntilFinished);
-                long done = waitingTime - millisUntilFinished;
-                setMillisUntilFinished(millisUntilFinished);
-                if (factoryProgressBar != null) {
-                    factoryProgressBar.setProgress((int) (done * 100 / waitingTime));
-                }
-                if (timeLeftTextView != null) {
-                    timeLeftTextView.setText(countDownUtil.getMinutes() + ":" + countDownUtil.getSeconds() + ":" + countDownUtil.getMilliSeconds());
-                }
+            if (factoryProgressBar != null) {
+                factoryProgressBar.setProgress((int) (100 * (waitingTime - millisUntilFinished) / waitingTime));
             }
 
-            @Override
-            public void onFinish() {
-                if (factoryProgressBar != null) {
-                    factoryProgressBar.setProgress(0);
-                }
-                if (timeLeftTextView != null) {
-                    timeLeftTextView.setText("0:0:0");
-                }
-                mainActivityPresenter.sumMoney(getIncome(), getZeroes());
-
-                setWorking(false);
-                setMillisUntilFinished(waitingTime);
-
-                if (getHasManager()) {
-                    startWorking(waitingTime);
-                }
+            if(timeLeftTextView != null){
+                timeLeftTextView.setText(countDownUtil.getMinutes() + ":" + countDownUtil.getSeconds() + ":" + countDownUtil.getMilliSeconds());
             }
-        }.start();
+        }
     }
 
     public void hireManager() {
         hasManager = true;
         if (open && !working) {
-            startWorking(waitingTime);
+            working = true;
+            MyCountDownTimer.addFactory(this);
         }
     }
 
-    public void loadFactoryProgress(long currentTime, long prevTime, long millisDone) {
+    public void loadFactoryProgress(long timePassed,long millisDone) {
         if (isOpen() && millisDone != 0) {
-            long timePast = currentTime - prevTime;
-            long fullTime = millisDone + timePast;
+            long fullTime = millisDone + timePassed;
             if (fullTime < getWaitingTime()) {
-                startWorking(getWaitingTime() - fullTime);
+                countDownUtil = new CountDownUtil(waitingTime - fullTime);
+                working = true;
+                MyCountDownTimer.addFactory(this);
             } else {
                 if (getHasManager()) {
                     int times = (int) (fullTime / getWaitingTime());
                     long progressToSet = fullTime % getWaitingTime();
                     mainActivityPresenter.sumOfflineMoney(getIncome() * times, getZeroes());
-                    startWorking(getWaitingTime() - progressToSet);
+
+                    countDownUtil = new CountDownUtil(waitingTime - progressToSet);
+                    working = true;
+                    MyCountDownTimer.addFactory(this);
                 } else {
                     mainActivityPresenter.sumOfflineMoney(getIncome(), getZeroes());
                 }
@@ -265,6 +251,8 @@ public class Factory {
     private int level = 0;
     private int upgradeZeroes;
     private int zeroes;
+
+    private CountDownUtil countDownUtil;
 
     private ProgressBar factoryProgressBar;
     private TextView timeLeftTextView;
