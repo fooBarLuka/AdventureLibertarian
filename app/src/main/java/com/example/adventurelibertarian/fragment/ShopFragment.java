@@ -62,49 +62,36 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
     }
 
     public void setColorItemsToRecyclerView(final List<ColorModel> colorModels) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                colorAdapter = new ColorAdapter(colorModels);
+                setColorAdapter();
+            }
+        });
 
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            colorAdapter = new ColorAdapter(colorModels);
-            setColorAdapter();
-        } else {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    colorAdapter = new ColorAdapter(colorModels);
-                    setColorAdapter();
-                }
-            });
-        }
     }
 
-    public void setBackgroundColorItemsToRecyclerview(final List<BackgroundColorModel> backgroundColorModels){
-        if(Looper.myLooper() == Looper.getMainLooper()){
-            backgroundColorAdapter = new BackgroundColorAdapter(backgroundColorModels);
-            setBackgroundColorAdapter();
-        } else {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    backgroundColorAdapter = new BackgroundColorAdapter(backgroundColorModels);
-                    setBackgroundColorAdapter();
-                }
-            });
-        }
+    public void setBackgroundColorItemsToRecyclerview(final List<BackgroundColorModel> backgroundColorModels) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                backgroundColorAdapter = new BackgroundColorAdapter(backgroundColorModels);
+                setBackgroundColorAdapter();
+            }
+        });
+
     }
 
     public void setManagerItemsToRecyclerView(final List<ManagerModel> managerModels) {
-        if (Looper.getMainLooper() == Looper.myLooper()) {
-            managerAdapter = new ManagerAdapter(managerModels);
-            setManagerAdapter();
-        } else {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    managerAdapter = new ManagerAdapter(managerModels);
-                    setManagerAdapter();
-                }
-            });
-        }
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                managerAdapter = new ManagerAdapter(managerModels);
+                setManagerAdapter();
+            }
+        });
+
     }
 
     private void setColorAdapter() {
@@ -117,7 +104,7 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
         shopRecyclerView.setAdapter(managerAdapter);
     }
 
-    private void setBackgroundColorAdapter(){
+    private void setBackgroundColorAdapter() {
         shopRecyclerView.setAdapter(null);
         shopRecyclerView.setAdapter(backgroundColorAdapter);
     }
@@ -137,7 +124,7 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
                 setColorAdapter();
             }
         } else {
-            if(backgroundColorAdapter == null){
+            if (backgroundColorAdapter == null) {
                 ShopFragmentPresenter.getInstance().fetchBackgroundColorModels();
             } else {
                 setBackgroundColorAdapter();

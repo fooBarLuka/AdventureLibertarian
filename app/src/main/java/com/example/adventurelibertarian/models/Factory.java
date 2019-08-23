@@ -1,6 +1,5 @@
 package com.example.adventurelibertarian.models;
 
-import android.os.AsyncTask;
 import android.os.CountDownTimer;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -201,9 +200,8 @@ public class Factory {
         }
     }
 
-    public void loadFactoryProgress(long currentTime, long prevTime, long millisDone) {
+    public void loadFactoryProgress(long timePast, long millisDone) {
         if (isOpen() && millisDone != 0) {
-            long timePast = currentTime - prevTime;
             long fullTime = millisDone + timePast;
             if (fullTime < getWaitingTime()) {
                 startWorking(getWaitingTime() - fullTime);
