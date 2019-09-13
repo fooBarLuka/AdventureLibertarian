@@ -55,6 +55,8 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder>
         private TextView colorSetTextView;
         private ColorModel colorModel;
 
+        private int resourceId;
+
         public ColorHolder(@NonNull View itemView) {
             super(itemView);
             priceTextView = itemView.findViewById(R.id.price_text_view_id);
@@ -66,7 +68,9 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder>
         public void setData(ColorModel colorModel){
             this.colorModel = colorModel;
             priceTextView.setText(String.format("%.2f",colorModel.price) + CurrencyUtil.reverseCurrencies.get(colorModel.zeroes));
-            colorView.setBackgroundColor(colorModel.color);
+//            colorView.setBackgroundColor(colorModel.color);
+            resourceId= colorView.getResources().getIdentifier(colorModel.entryName, "drawable", colorView.getContext().getPackageName());
+            colorView.setBackgroundResource(resourceId);
             if(colorModel.set){
                 actionButton.setVisibility(View.INVISIBLE);
                 colorHolder = this;
@@ -117,7 +121,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorHolder>
                         colorHolder.removeSetColor();
                         colorHolder = ColorHolder.this;
 
-                        FactoriesAdapter.backgroundColor = colorModel.color;
+                        FactoriesAdapter.backgroundDrawableId = resourceId;
                         MainActivity.mainActivity.redrawFactories();
                     } else {
                         if(MainActivityPresenter.getInstance().hasEnoughMoney(colorModel.price, colorModel.zeroes)){

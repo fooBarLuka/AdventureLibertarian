@@ -8,6 +8,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.example.adventurelibertarian.R;
 import com.example.adventurelibertarian.dao.BackgroundColorDao;
 import com.example.adventurelibertarian.dao.ColorDao;
 import com.example.adventurelibertarian.dao.ManagerDao;
@@ -55,48 +56,64 @@ public abstract class MyDataBase extends RoomDatabase {
         });
     }
 
-    public static void initializeColorModels() {
+    public static void initializeColorModels(final Context context) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 List<ColorModel> colorModels = new ArrayList<>();
+                String drawableName = context.getResources().getResourceEntryName(R.drawable.white_default);
 
-                ColorModel defaultColorModel = new ColorModel(Color.parseColor("#cccccc"), 0, 0);
+                ColorModel defaultColorModel = new ColorModel(drawableName, 0, 0);
                 defaultColorModel.bought = true;
                 defaultColorModel.set = true;
                 colorModels.add(defaultColorModel);
 
-                colorModels.add(new ColorModel(Color.parseColor("#b0000000"), 100000, 0));
-                colorModels.add(new ColorModel(Color.parseColor("#EDBB0707"), 1000, 6));
-                colorModels.add(new ColorModel(Color.parseColor("#FF4CAF50"), 1000, 9));
-                colorModels.add(new ColorModel(Color.parseColor("#77FFEA00"), 100, 12));
-                colorModels.add(new ColorModel(Color.parseColor("#FFFFEA00"), 100, 15));
-                colorModels.add(new ColorModel(Color.parseColor("#FFFF3D00"), 100, 15));
-                colorModels.add(new ColorModel(Color.parseColor("#FFFF1744"), 100, 15));
+                drawableName = context.getResources().getResourceEntryName(R.drawable.rgb1);
+                colorModels.add(new ColorModel(drawableName, 100000, 0));
+
+                drawableName = context.getResources().getResourceEntryName(R.drawable.rgb2);
+                colorModels.add(new ColorModel(drawableName, 1000, 6));
+
+                drawableName = context.getResources().getResourceEntryName(R.drawable.rgb3);
+                colorModels.add(new ColorModel(drawableName, 1000, 9));
+
+                drawableName = context.getResources().getResourceEntryName(R.drawable.rgb4);
+                colorModels.add(new ColorModel(drawableName, 100, 12));
+//                colorModels.add(new ColorModel(Color.parseColor("#FFFFEA00"), 100, 15));
+//                colorModels.add(new ColorModel(Color.parseColor("#FFFF3D00"), 100, 15));
+//                colorModels.add(new ColorModel(Color.parseColor("#FFFF1744"), 100, 15));
 
                 MyDataBase.getInstance().getColorDao().createAll(colorModels);
             }
         });
     }
 
-    public static void initializeBackgroundColorModels(){
+    public static void initializeBackgroundColorModels(final Context context){
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 final List<BackgroundColorModel> backgroundColorModels = new ArrayList<>();
 
-                BackgroundColorModel defaultBackgroundColorModel = new BackgroundColorModel(Color.parseColor("#ffffff"), 0, 0);
+                String entryName = context.getResources().getResourceEntryName(R.drawable.white_default);
+                BackgroundColorModel defaultBackgroundColorModel = new BackgroundColorModel(entryName, 0, 0);
                 defaultBackgroundColorModel.bought = true;
                 defaultBackgroundColorModel.set = true;
                 backgroundColorModels.add(defaultBackgroundColorModel);
 
-                backgroundColorModels.add(new BackgroundColorModel(Color.parseColor("#000000"), 100000, 0));
-                backgroundColorModels.add(new BackgroundColorModel(Color.parseColor("#EDBB0707"), 1000, 6));
-                backgroundColorModels.add(new BackgroundColorModel(Color.parseColor("#FF4CAF50"), 1000, 9));
-                backgroundColorModels.add(new BackgroundColorModel(Color.parseColor("#77FFEA00"), 100, 12));
-                backgroundColorModels.add(new BackgroundColorModel(Color.parseColor("#FFFFEA00"), 100, 15));
-                backgroundColorModels.add(new BackgroundColorModel(Color.parseColor("#FFFF3D00"), 100, 15));
-                backgroundColorModels.add(new BackgroundColorModel(Color.parseColor("#FFFF1744"), 100, 15));
+                entryName = context.getResources().getResourceEntryName(R.drawable.rgb1);
+                backgroundColorModels.add(new BackgroundColorModel(entryName, 100000, 0));
+
+                entryName = context.getResources().getResourceEntryName(R.drawable.rgb2);
+                backgroundColorModels.add(new BackgroundColorModel(entryName, 1000, 6));
+
+                entryName = context.getResources().getResourceEntryName(R.drawable.rgb3);
+                backgroundColorModels.add(new BackgroundColorModel(entryName, 1000, 9));
+
+                entryName = context.getResources().getResourceEntryName(R.drawable.rgb4);
+                backgroundColorModels.add(new BackgroundColorModel(entryName, 100, 12));
+//                backgroundColorModels.add(new BackgroundColorModel(Color.parseColor("#FFFFEA00"), 100, 15));
+//                backgroundColorModels.add(new BackgroundColorModel(Color.parseColor("#FFFF3D00"), 100, 15));
+//                backgroundColorModels.add(new BackgroundColorModel(Color.parseColor("#FFFF1744"), 100, 15));
 
                 MyDataBase.getInstance().getBackgroundColorDao().createAll(backgroundColorModels);
             }

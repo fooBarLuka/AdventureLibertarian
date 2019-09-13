@@ -5,8 +5,8 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class ColorModel {
-    public ColorModel(int color, double price, int zeroes){
-        this.color = color;
+    public ColorModel(String entryName, double price, int zeroes){
+        this.entryName = entryName;
         this.price = price;
         this.zeroes = zeroes;
     }
@@ -14,7 +14,7 @@ public class ColorModel {
     @PrimaryKey(autoGenerate = true)
     public long id;
 
-    public int color;
+    public String entryName;
     public double price;
     public int zeroes;
     public boolean bought = false;

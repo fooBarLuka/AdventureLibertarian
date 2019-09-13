@@ -24,7 +24,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.FactoryHolder> {
 
-    public static int backgroundColor = -1;
+    public static int backgroundDrawableId = -1;
 
     private List<Factory> factories = new ArrayList<>();
 
@@ -93,8 +93,9 @@ public class FactoriesAdapter extends RecyclerView.Adapter<FactoriesAdapter.Fact
             factory.setFactoryProgressBar(factoryProgressBar);
             factory.setTimeLeftTextView(timeLeftTextView);
 
-            if(backgroundColor != -1){
-                rootView.setBackgroundColor(backgroundColor);
+            if(backgroundDrawableId != -1){
+//                rootView.setBackgroundColor(backgroundDrawableId);
+                rootView.setBackgroundResource(backgroundDrawableId);
             }
 
             setActions(factory);

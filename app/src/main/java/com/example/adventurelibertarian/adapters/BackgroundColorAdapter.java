@@ -55,6 +55,8 @@ public class BackgroundColorAdapter extends RecyclerView.Adapter<BackgroundColor
         private TextView chosenTextView;
         private BackgroundColorModel backgroundColorModel;
 
+        private int resourceId;
+
         public BackgroundColorHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -67,7 +69,9 @@ public class BackgroundColorAdapter extends RecyclerView.Adapter<BackgroundColor
         public void setData(BackgroundColorModel backgroundColorModel){
             this.backgroundColorModel = backgroundColorModel;
             priceTextView.setText(String.format("%.2f", backgroundColorModel.price, CurrencyUtil.reverseCurrencies.get(backgroundColorModel.zeroes)));
-            colorView.setBackgroundColor(backgroundColorModel.color);
+            resourceId = colorView.getResources().getIdentifier(backgroundColorModel.entryName,
+                    "drawable", colorView.getContext().getPackageName());
+            colorView.setBackgroundResource(resourceId);
             if(backgroundColorModel.set){
                 backgroundColorHolder = this;
                 actionButton.setVisibility(View.INVISIBLE);
@@ -120,7 +124,8 @@ public class BackgroundColorAdapter extends RecyclerView.Adapter<BackgroundColor
                         backgroundColorHolder.removeSetColor();
                         backgroundColorHolder = BackgroundColorHolder.this;
 
-                        MainActivity.mainActivity.changeRecyclerViewBackgroundColor(backgroundColorModel.color);
+
+                        MainActivity.mainActivity.changeRecyclerViewBackgroundColor(resourceId);
                     } else {
                         if (MainActivityPresenter.getInstance().hasEnoughMoney(backgroundColorModel.price, backgroundColorModel.zeroes)) {
                             backgroundColorModel.bought = true;

@@ -21,6 +21,7 @@ import com.example.adventurelibertarian.R;
 import com.example.adventurelibertarian.adapters.FactoriesAdapter;
 import com.example.adventurelibertarian.database.MyDataBase;
 import com.example.adventurelibertarian.fragment.ShopFragment;
+import com.example.adventurelibertarian.models.BackgroundColorModel;
 import com.example.adventurelibertarian.models.ColorModel;
 import com.example.adventurelibertarian.presenter.MainActivityPresenter;
 import com.example.adventurelibertarian.utils.CurrencyUtil;
@@ -121,8 +122,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         factoriesRecyclerView.setAdapter(factoriesAdapter);
     }
 
-    public void changeRecyclerViewBackgroundColor(int color){
-        factoriesRecyclerView.setBackgroundColor(color);
+    public void changeRecyclerViewBackgroundColor(int resourceId){
+        factoriesRecyclerView.setBackgroundResource(resourceId);
     }
 
     private void loadGame() {
@@ -132,10 +133,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mainActivityPresenter.loadMoney(preferences);
             mainActivityPresenter.loadOfflineMoneyAndProgresses(preferences);
             loadFactoriesColor();
+            loadFactoriesRecyclerviewBackgroundColor();
         } else {
-            MyDataBase.initializeColorModels();
+            MyDataBase.initializeColorModels(this);
             MyDataBase.initializeManagerModels();
-            MyDataBase.initializeBackgroundColorModels();
+            MyDataBase.initializeBackgroundColorModels(this);
         }
     }
 
@@ -150,11 +152,38 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                FactoriesAdapter.backgroundColor = colorModels.get(finalI).color;
+                                int resourceId = getResources().getIdentifier(colorModels.get(finalI).entryName, "drawable", getPackageName());
+                                FactoriesAdapter.backgroundDrawableId = resourceId;
                                 redrawFactories();
                             }
                         });
                         break;
+                    }
+                }
+            }
+        });
+    }
+
+
+
+    private void loadFactoriesRecyclerviewBackgroundColor(){
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                List<BackgroundColorModel> backgroundColorModels = MyDataBase.getInstance().getBackgroundColorDao().getAllBackgroundColorModels();
+
+                for(int i = 0; i < backgroundColorModels.size(); i++){
+                    final BackgroundColorModel backgroundColorModel = backgroundColorModels.get(i);
+
+                    if(backgroundColorModel.set){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                int resourceId = getResources().getIdentifier(backgroundColorModel.entryName, "drawable", getPackageName());
+                                changeRecyclerViewBackgroundColor(resourceId);
+                            }
+                        });
+                        return;
                     }
                 }
             }

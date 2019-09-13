@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey;
 @Entity
 public class BackgroundColorModel {
 
-    public BackgroundColorModel(int color, double price, int zeroes){
-        this.color = color;
+    public BackgroundColorModel(String entryName, double price, int zeroes){
+        this.entryName = entryName;
         this.price = price;
         this.zeroes = zeroes;
     }
@@ -16,7 +16,7 @@ public class BackgroundColorModel {
     @PrimaryKey
     public Long id;
 
-    public int color;
+    public String entryName;
 
     public double price;
 
