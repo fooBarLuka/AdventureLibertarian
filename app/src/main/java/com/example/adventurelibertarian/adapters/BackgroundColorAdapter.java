@@ -68,7 +68,7 @@ public class BackgroundColorAdapter extends RecyclerView.Adapter<BackgroundColor
 
         public void setData(BackgroundColorModel backgroundColorModel){
             this.backgroundColorModel = backgroundColorModel;
-            priceTextView.setText(String.format("%.2f", backgroundColorModel.price, CurrencyUtil.reverseCurrencies.get(backgroundColorModel.zeroes)));
+            priceTextView.setText(String.format("%.2f", backgroundColorModel.price + CurrencyUtil.reverseCurrencies.get(backgroundColorModel.zeroes)));
             resourceId = colorView.getResources().getIdentifier(backgroundColorModel.entryName,
                     "drawable", colorView.getContext().getPackageName());
             colorView.setBackgroundResource(resourceId);
